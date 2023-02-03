@@ -18,13 +18,17 @@ Route::get('/base-content', function () {
 });
 
 Route::get('/', 'App\Http\Controllers\LandingPage\ViewLandingPage@index');
-Route::get('/logout', function(){
+Route::get('/logout', function () {
     Auth::logout();
     return redirect('/');
 });
 Route::get('/login', 'App\Http\Controllers\Login\ViewLogin@index');
 
 Route::get('/register', 'App\Http\Controllers\Login\ViewLogin@register');
+
+Route::resource('/profile', App\Http\Controllers\Profile\ProfileController::class)->only(['edit']);
+Route::post('/profile/{user}/edit', 'App\Http\Controllers\Profile\ProfileController@update');
+
 Route::post('/login', 'App\Http\Controllers\Login\DeliverLogin@login');
 Route::post('/register', 'App\Http\Controllers\Login\DeliverLogin@register');
 
@@ -32,7 +36,7 @@ Route::get('/gender/list', 'App\Http\Controllers\Gender\DeliverGender@getAllGend
 Route::get('/produk/{id}', 'App\Http\Controllers\Admin\Dashboard\Produk\ViewProduk@landingPageDetail');
 
 Route::prefix('admin')
-    ->middleware(['auth'])->group(function () {
+    ->middleware(['auth', 'isAdmin'])->group(function () {
         Route::get('/dashboard', 'App\Http\Controllers\Admin\Dashboard\ListUser\ViewListUser@index');
         /** PRODUK */
         Route::get('/produk', 'App\Http\Controllers\Admin\Dashboard\Produk\ViewProduk@index');
@@ -45,4 +49,8 @@ Route::prefix('admin')
 
         Route::resource('banner-produk', App\Http\Controllers\Admin\BannerProduk\BannerProdukController::class);
         Route::post('banner-produk/edit/{banner}', 'App\Http\Controllers\Admin\BannerProduk\BannerProdukController@update');
+        Route::resource('list-user', App\Http\Controllers\Admin\User\UserController::class);
+        Route::post('list-user/edit/{user}', 'App\Http\Controllers\Admin\User\UserController@update');
+        Route::post('list-user/verified/{user}', 'App\Http\Controllers\Admin\User\UserController@verifikasi');
     });
+

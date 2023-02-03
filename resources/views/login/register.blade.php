@@ -41,14 +41,15 @@
                     <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
                         <div class="card-body p-4 p-md-5">
                             <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
-                            <form method="POST">
+                            <form method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
 
                                         <div class="form-outline">
                                             <label class="form-label" for="name">Name</label>
-                                            <input type="text" id="name" name="name" class="form-control form-control-lg" required />
+                                            <input type="text" id="name" name="name"
+                                                class="form-control form-control-lg" required />
                                             {!! renderErrorViewValidator('name') !!}
                                         </div>
 
@@ -68,8 +69,9 @@
                                     <div class="col-md-6 mb-4 pb-2">
 
                                         <div class="form-outline">
-                                            <input type="email" id="emailAddress" name="email" class="form-control form-control-lg" required />
                                             <label class="form-label" for="emailAddress">Email</label>
+                                            <input type="email" id="emailAddress" name="email"
+                                                class="form-control form-control-lg" required />
                                             {!! renderErrorViewValidator('email') !!}
                                         </div>
 
@@ -77,8 +79,9 @@
                                     <div class="col-md-6 mb-4 pb-2">
 
                                         <div class="form-outline">
-                                            <input type="number" id="phoneNumber" name="phone" class="form-control form-control-lg" required />
                                             <label class="form-label" for="phoneNumber">Phone Number</label>
+                                            <input type="number" id="phoneNumber" name="phone"
+                                                class="form-control form-control-lg" required />
                                             {!! renderErrorViewValidator('phone') !!}
                                         </div>
 
@@ -86,15 +89,32 @@
                                     <div class="col-md-12 mb-4 pb-2">
 
                                         <div class="form-outline">
-                                            <input type="password" id="password" name="password" class="form-control form-control-lg" required />
                                             <label class="form-label" for="password">Password</label>
+                                            <input type="password" id="password" name="password"
+                                                class="form-control form-control-lg" required />
                                             {!! renderErrorViewValidator('password') !!}
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-12 mb-4 pb-2">
+
+                                        <div class="form-outline">
+                                            <label class="form-label" for="selfie">Selfie</label>
+                                            <input type="file" name="selfie" class="form-control"><br>
+                                            <button id="btnKamera" class="btn btn-info" type="button">Upload Via
+                                                Kamera</button>
+                                            <input class="btn btn-default" type=button value="Take Snapshot"
+                                                id="takeSnap" onClick="take_snapshot()">
+                                            <input type="hidden" name="via_kamera">
+                                            <div id="my_camera"></div>
+                                            <div id="preview_selfie"></div>
+                                            {!! renderErrorViewValidator('selfie') !!}
                                         </div>
 
                                     </div>
                                 </div>
                                 <div class="mt-4 pt-2">
-                                    <input class="btn btn-primary btn-lg" type="submit" />
+                                    <input class="btn btn-primary btn-lg btn-submit" type="submit" />
                                     <a href="{{ url('') }}" class="btn btn-info btn-lg">Halaman Utama</a>
                                 </div>
 
@@ -108,21 +128,21 @@
 </body>
 <script src="https://code.jquery.com/jquery-3.6.3.js" integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
     crossorigin="anonymous"></script>
+<script src="{{ asset('assets/dist/js/webcam.js') }}"></script>
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         $.ajax({
             type: "GET",
-            url: "{{url('gender/list')}}",
+            url: "{{ url('gender/list') }}",
             dataType: "json",
-            success: function (response) {
+            success: function(response) {
                 // console.log(response)
                 let html = ''
-                if(response.code == 200){
-                    $.each(response?.data, function (index, value) {
-                        if(index == 0){
+                if (response.code == 200) {
+                    $.each(response?.data, function(index, value) {
+                        if (index == 0) {
                             checked = 'checked';
-                        }
-                        else{
+                        } else {
                             checked = '';
                         }
                         html += `
@@ -137,11 +157,54 @@
                 }
                 $('.content-gender').html(html);
             },
-            error : function (jqXHR, textStatus, errorThrown) {
+            error: function(jqXHR, textStatus, errorThrown) {
                 console.log(errorThrown)
             }
         });
     });
+
+    $(document).on('click', '#btnKamera', function() {
+        Webcam.set({
+            width: 320,
+            height: 240,
+            image_format: 'jpeg',
+            jpeg_quality: 90
+        });
+        Webcam.attach('#my_camera');
+    })
+
+    $(document).on('submit', '.btn-submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData();
+        formData.append('avatar_cam', $('[name="via_kamera"]').val());
+        formData.append('name', $('[name="name"]').val());
+        formData.append('email', $('[name="email"]').val());
+        formData.append('phone', $('[name="phone"]').val());
+        formData.append('password', $('[name="password"]').val());
+        formData.append('selfie', $('[name="selfie"]').val());
+
+        $.ajax({
+            type: "POST",
+            url: "{{ url()->current() }}",
+            data: formData,
+            success: function(response) {
+                window.reload();
+            }
+        });
+    })
+</script>
+
+<!-- Code to handle taking the snapshot and displaying it locally -->
+<script language="JavaScript">
+    function take_snapshot() {
+        // take snapshot and get image data
+        Webcam.snap(function(data_uri) {
+            $('[name="via_kamera"]').val(data_uri)
+            // display results in page
+            document.getElementById('preview_selfie').innerHTML = '<img src="' + data_uri + '"/>';
+        });
+    }
 </script>
 
 </html>

@@ -1,25 +1,83 @@
 <?php
 
-namespace App\Http\Controllers\Login;
+namespace App\Http\Controllers\Profile;
 
+use App\Http\Controllers\Admin\User\SetUser;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Login\LoginRequest;
-use App\Http\Requests\Login\RegisterRequest;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Profile\ProfileEditRequest;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class DeliverLogin extends Controller
+class ProfileController extends Controller
 {
     protected $path_file_save = 'users';
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
 
-    public function register(RegisterRequest $request){
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
 
-        if(empty($request->via_kamera) && empty($request->selfie)){
-            return back()->withInput()->with('validator', ['selfie' => ['Selfie Required or fill via kamera']]);
-        }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Int $id)
+    {
+        $user = User::find($id);
+        return view('landing-page.profile.edit', compact('user'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(ProfileEditRequest $request, $id)
+    {
 
         try {
-
+            $path_foto = null;
             if (!empty($request->file())) {
                 $slug      = slugCustom($request->name);
                 $file      = $request->file() ?? [];
@@ -33,18 +91,17 @@ class DeliverLogin extends Controller
                 ];
 
                 $path_foto = (new \App\Http\Controllers\Functions\ImageUpload())->imageUpload('file', $config_file)['path_gambar'];
-            }
-            else{
+            } else if(!empty($request->via_kamera)) {
                 $encoded_data   = $request->via_kamera;
                 $image_parts    = explode(";base64,", $encoded_data);
                 $file_path = public_path('uploads/users');
-                if (!file_exists($file_path)){
+                if (!file_exists($file_path)) {
                     mkdir($file_path, 0775, true);
                 }
                 $image_base64   = base64_decode($image_parts[1]);
                 $filename       = uniqid() . '.jpg';
                 $file           = $file_path . '/' . $filename;
-                $path_foto      = 'uploads/'.$this->path_file_save.'/' . $filename;
+                $path_foto      = 'uploads/' . $this->path_file_save . '/' . $filename;
                 // $file_thumbnail = $file.'_300x300.jpeg';
                 // $folder_thumbnail = '300x300';
                 // $size = 300;
@@ -64,54 +121,42 @@ class DeliverLogin extends Controller
                 if (!$result) {
                     return $result;
                 }
-
             }
+
             DB::connection('mysql')->beginTransaction();
-            $register = (new SetLogin())->setRegister(
+            $user = (new SetUser())->setUpdateUser(
+                $id,
                 $name = $request->name,
                 $email = $request->email,
-                $password = $request->password,
                 $phone = $request->phone,
-                $gender = $request->gender,
-                $path_foto
+                $path_foto,
+                $gender = $request->gender
             );
 
-            if($register){
+            if($user){
+
                 DB::connection('mysql')->commit();
-                return redirect('/login')->with('success', 'Berhasil Registrasi');
-            }else{
+                return back()->with('success', 'Berhasil Update Data');
+            }
+            else{
                 DB::connection('mysql')->rollback();
-                return back()->withInput()->with('error', 'Gagal');
+                return back()->with('error', 'Gagal Update Data');
             }
 
         } catch (\Throwable $th) {
-            DB::connection('mysql')->rollBack();
+            DB::connection('mysql')->rollback();
             return $this->exceptionView($th);
         }
     }
 
-    public function login(LoginRequest $request){
-        try {
-
-            $credentials = $request->only(['email', 'password']);
-            if (Auth::attempt($credentials)) {
-                if(Auth::user()->is_admin == 1){
-                    return redirect('admin/dashboard');
-                }
-                else if(auth()->user()->is_verified){
-                    return redirect('/');
-                }
-                else{
-                    Auth::logout();
-                    return redirect('login')->withInput()->with('error', 'Akun Belum Aktif, Silahkan hubungi Admin');
-                }
-            }
-            else{
-                Auth::logout();
-                return redirect('login')->withInput()->with('error', 'Password Atau Email Salah');
-            }
-        } catch (\Throwable $th) {
-            return $this->exceptionView($th);
-        }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
     }
 }

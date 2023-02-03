@@ -11,7 +11,9 @@ class SetLogin extends Controller
         String $name,
         String $email,
         String $password,
-        String $phone
+        String $phone,
+        String $gender,
+        String $path_foto
     )
     {
         $register = new User();
@@ -19,6 +21,8 @@ class SetLogin extends Controller
         $register->email = $email;
         $register->password = bcrypt($password);
         $register->phone = $phone;
+        $register->gender = $gender;
+        $register->path_foto = $path_foto;
         $register->save();
         return $register;
     }

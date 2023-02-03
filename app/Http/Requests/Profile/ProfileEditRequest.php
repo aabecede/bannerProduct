@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Login;
+namespace App\Http\Requests\Profile;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
-class RegisterRequest extends FormRequest
+class ProfileEditRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,15 +29,17 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'required',
             'gender' => 'required',
-            'password' => 'required',
-            'password' => 'gender',
             'email' => [
                 'required',
-                Rule::unique('users', 'email'),
+                Rule::unique('users', 'email')->using(function($q){
+                    $q->where('id', '!=', auth()->user()->id);
+                }),
             ],
             'phone' => [
                 'required',
-                Rule::unique('users', 'phone')
+                Rule::unique('users', 'phone')->using(function($q){
+                    $q->where('id', '!=', auth()->user()->id);
+                })
             ],
         ];
     }
@@ -45,6 +47,7 @@ class RegisterRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $warning = $validator->errors()->messages();
+
         throw new HttpResponseException(
             back()->withInput()->with('validator', $warning)
         );
