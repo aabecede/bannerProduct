@@ -6,14 +6,52 @@
             max-height: 180px !important;
             object-fit: fill;
         }
+        .fit-carousel{
+            max-width: 100% !important;
+            max-height: 550px !important;
+            object-fit: fill;
+        }
     </style>
+
     <!-- Header-->
     <header class="bg-dark py-5">
-        <div class="container px-4 px-lg-5 my-5">
-            <div class="text-center text-white">
-                <h1 class="display-4 fw-bolder">Shop in style</h1>
-                <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+
+        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+            <div class="carousel-indicators">
+                @foreach ($banner_produk as $key => $item)
+                    @php
+                        $active = '';
+                        if ($loop->first) {
+                            $active = 'active';
+                        }
+                    @endphp
+                    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ $key }}"
+                        class="{{ $active }}" aria-current="true" aria-label="Slide 1"></button>
+                @endforeach
             </div>
+            <div class="carousel-inner">
+                @foreach ($banner_produk as $key => $item)
+                    @php
+                        $active = '';
+                        if ($loop->first) {
+                            $active = 'active';
+                        }
+                    @endphp
+                    <div class="carousel-item {{ $active }} text-center">
+                        <img src="{{ imageExists($item->path_gambar) }}" class="d-block fit-carousel" alt="{{ $key }}">
+                    </div>
+                @endforeach
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
     </header>
     <!-- Section-->
@@ -38,7 +76,8 @@
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center">
-                                    <a class="btn btn-outline-dark mt-auto" href="{{ url("produk/$item->id") }}">Lihat Detail</a>
+                                    <a class="btn btn-outline-dark mt-auto" href="{{ url("produk/$item->id") }}">Lihat
+                                        Detail</a>
                                 </div>
                             </div>
                         </div>

@@ -15,7 +15,7 @@
                     alt="User Image">
             </div>
             <div class="info">
-                <a href="#" class="d-block">{{auth()->user()->name}}</a>
+                <a href="#" class="d-block">{{ auth()->user()->name }}</a>
             </div>
         </div>
 
@@ -39,7 +39,8 @@
                 <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
                 <li class="nav-item">
-                    <a href="{{url('admin/dashboard')}}" class="nav-link @if(request()->is('admin/dashboard*')) active @endif">
+                    <a href="{{ url('admin/dashboard') }}"
+                        class="nav-link @if (request()->is('admin/dashboard*')) active @endif">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Dashboard
@@ -48,7 +49,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{url('admin/produk')}}" class="nav-link @if(request()->is('admin/produk*')) active @endif">
+                    <a href="{{ url('admin/produk') }}"
+                        class="nav-link @if (request()->is('admin/produk*')) active @endif">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>
                             Produk
@@ -57,7 +59,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{url('admin/banner-produk')}}" class="nav-link @if(request()->is('admin/banner-produk*')) active @endif">
+                    <a href="{{ url('admin/banner-produk') }}"
+                        class="nav-link @if (request()->is('admin/banner-produk*')) active @endif">
                         <i class="nav-icon fas fa-newspaper"></i>
                         <p>
                             Banner Produk
@@ -65,9 +68,10 @@
                         </p>
                     </a>
                 </li>
-                @if(auth()->user()->is_admin)
+                @if (auth()->user()->is_admin)
                     <li class="nav-item">
-                        <a href="{{url('admin/list-user')}}" class="nav-link @if(request()->is('admin/list-user*')) active @endif">
+                        <a href="{{ url('admin/list-user') }}"
+                            class="nav-link @if (request()->is('admin/list-user*')) active @endif">
                             <i class="nav-icon fas fa-users"></i>
                             <p>
                                 List User
@@ -76,6 +80,16 @@
                         </a>
                     </li>
                 @endif
+                <li class="nav-item">
+                    <a href="{{ url('logout') }}"
+                        class="nav-link @if (request()->is('logout')) active @endif">
+                        <i class="nav-icon fas fa-door-open"></i>
+                        <p>
+                            LOGOUT
+                            {{-- <span class="right badge badge-danger">New</span> --}}
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

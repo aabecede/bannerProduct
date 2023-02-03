@@ -18,9 +18,11 @@ Route::get('/base-content', function () {
 });
 
 Route::get('/', 'App\Http\Controllers\LandingPage\ViewLandingPage@index');
-Route::middleware(['auth'])->group(function () {
-    Route::get('/login', 'App\Http\Controllers\Login\ViewLogin@index');
+Route::get('/logout', function(){
+    Auth::logout();
+    return redirect('/');
 });
+Route::get('/login', 'App\Http\Controllers\Login\ViewLogin@index');
 
 Route::get('/register', 'App\Http\Controllers\Login\ViewLogin@register');
 Route::post('/login', 'App\Http\Controllers\Login\DeliverLogin@login');
@@ -40,4 +42,7 @@ Route::prefix('admin')
         Route::get('/produk/{id}/edit', 'App\Http\Controllers\Admin\Dashboard\Produk\ViewProduk@edit');
         Route::post('/produk/edit/{id}', 'App\Http\Controllers\Admin\Dashboard\Produk\DeliverProduk@edit');
         Route::delete('/produk/{id}', 'App\Http\Controllers\Admin\Dashboard\Produk\DeliverProduk@delete');
+
+        Route::resource('banner-produk', App\Http\Controllers\Admin\BannerProduk\BannerProdukController::class);
+        Route::post('banner-produk/edit/{banner}', 'App\Http\Controllers\Admin\BannerProduk\BannerProdukController@update');
     });
