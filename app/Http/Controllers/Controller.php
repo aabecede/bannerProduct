@@ -6,8 +6,73 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
+use Throwable;
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function baseJson(
+        array $result,
+        String $message,
+        Int $code
+    ) {
+        $response = $result;
+        $response['code'] = $code;
+        $response['message'] = $message;
+
+        return response()->json($response);
+    }
+
+    public function successJson(
+        array $result = [],
+        String $message = 'Berhasil',
+        Int $code = 200
+    ) {
+        return $this->baseJson(
+            $result,
+            $message,
+            $code
+        );
+    }
+
+    public function errorJson(
+        array $result = [],
+        String $message = 'Berhasil',
+        Int $code = 400
+    ) {
+        return $this->baseJson(
+            $result,
+            $message,
+            $code
+        );
+    }
+
+    public function exceptionJson(Throwable $th)
+    {
+        $result = [];
+        if (env('APP_DEBUG') == TRUE) {
+            $result = [
+                'result' => [
+                    'message' => $th->getMessage(),
+                    'line' => $th->getLine(),
+                    'path' => $th->getFile()
+                ]
+            ];
+        }
+        return $this->baseJson(
+            $result,
+            'Terjadi Kesalahan Server',
+            500
+        );
+    }
+
+    public function exceptionView(Throwable $th)
+    {
+        if (env('APP_DEBUG') == TRUE) {
+            dd($th);
+        } else {
+            abort(500);
+        }
+    }
 }
