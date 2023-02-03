@@ -34,9 +34,9 @@
                 @guest
                     Login
                 @endguest
-                @auth
+                {{-- @auth
                     {{ auth()->user->name }}
-                @endauth
+                @endauth --}}
             </a>
         </div>
     </div>

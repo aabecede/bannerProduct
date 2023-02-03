@@ -39,7 +39,7 @@ class DeliverLogin extends Controller
 
             $credentials = $request->only(['email', 'password']);
             if (Auth::attempt($credentials) && Auth::user()->is_verified == 1) {
-                return redirect('backoffice');
+                return redirect('admin/dashboard');
             }
             else{
                 return back()->withInput()->with('error', 'Password Atau Email Salah');

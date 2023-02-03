@@ -53,7 +53,7 @@ if (!function_exists('imageExists')) {
         if (file_exists($path)) {
             $path = asset($path);
         } else {
-            $path = 'https://source.unsplash.com/500x400?';
+            $path = 'https://dummyimage.com/450x300/dee2e6/6c757d.jpg';
         }
 
         return $path;
@@ -67,6 +67,17 @@ if (!function_exists('baseDateFormat')) {
     )
     {
         $result = Carbon::parse($date)->format($format_date);
+        return $result;
+    }
+}
+
+if (!function_exists('baseCurrencyFormat')) {
+    function baseCurrencyFormat(
+        $number,
+        $format = 'Rp.'
+    )
+    {
+        $result = $format.' '.number_format(round($number, 2));
         return $result;
     }
 }
@@ -87,5 +98,20 @@ if (!function_exists('renderErrorViewValidator')) {
         }
 
         return $html;
+    }
+}
+
+
+if (!function_exists('slugCustom')) {
+    function slugCustom($name)
+    {
+        $slug = preg_replace('~[^\pL\d]+~u', '-', $name);
+        $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug); // transliterate
+        $slug = preg_replace('~[^-\w]+~', '', $slug); // remove unwanted characters
+        $slug = trim($slug, '-'); // trim
+        $slug = preg_replace('~-+~', '-', $slug); // remove duplicate -
+        $slug = strtolower($slug); // lowercase
+
+        return $slug;
     }
 }

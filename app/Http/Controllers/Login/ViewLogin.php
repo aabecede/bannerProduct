@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 class ViewLogin extends Controller
 {
     public function index(){
+        if(!empty(auth()->user())){
+            return redirect('admin/dashboard');
+        }
         return view('login.index');
     }
 

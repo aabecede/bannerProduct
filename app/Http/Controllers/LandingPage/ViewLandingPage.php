@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\LandingPage;
 
+use App\Http\Controllers\Admin\Dashboard\Produk\ServiceProduk;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class ViewLandingPage extends Controller
 {
     //
     public function index()
     {
-        return view('landing-page.index');
+        $produk = (new ServiceProduk())->paginate(8);
+        return view('landing-page.index', compact('produk'));
     }
 }
