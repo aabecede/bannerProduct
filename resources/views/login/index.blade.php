@@ -68,6 +68,7 @@
                                 </div>
                                 <div class="mt-4 pt-2">
                                     <input class="btn btn-primary btn-lg" type="submit" />
+                                    <a href="{{ url('register') }}" class="btn btn-parimary">Register</a>
                                 </div>
 
                             </form>
