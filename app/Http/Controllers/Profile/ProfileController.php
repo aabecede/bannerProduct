@@ -63,6 +63,9 @@ class ProfileController extends Controller
     public function edit(Int $id)
     {
         $user = User::find($id);
+        if(empty($user)){
+            abort(404, 'Sepertinya anda menghilang');
+        }
         return view('landing-page.profile.edit', compact('user'));
     }
 

@@ -98,6 +98,7 @@
                                         </div>
                                         <div class="mt-4 pt-2">
                                             <input class="btn btn-primary btn-lg btn-submit" type="submit" />
+                                            <a href="{{ url('logout') }}">Logout</a>
                                         </div>
 
                                     </form>

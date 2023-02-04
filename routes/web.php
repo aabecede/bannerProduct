@@ -26,8 +26,8 @@ Route::get('/login', 'App\Http\Controllers\Login\ViewLogin@index');
 
 Route::get('/register', 'App\Http\Controllers\Login\ViewLogin@register');
 
-Route::resource('/profile', App\Http\Controllers\Profile\ProfileController::class)->only(['edit']);
-Route::post('/profile/{user}/edit', 'App\Http\Controllers\Profile\ProfileController@update');
+Route::resource('/profile', App\Http\Controllers\Profile\ProfileController::class)->only(['edit'])->middleware(['auth']);
+Route::post('/profile/{user}/edit', 'App\Http\Controllers\Profile\ProfileController@update')->middleware(['auth']);
 
 Route::post('/login', 'App\Http\Controllers\Login\DeliverLogin@login');
 Route::post('/register', 'App\Http\Controllers\Login\DeliverLogin@register');
